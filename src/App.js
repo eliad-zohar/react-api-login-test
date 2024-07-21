@@ -1,23 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import axios from "axios";
 
 function App() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const loginResponse = await axios.post("http://localhost:5014/api/login", {
+        Username: username,
+        Password: password
+      }, {
+        withCredentials: true // This will include cookies in the request
+      });
+
+      setMessage("Login successful. Fetching game info...");
+
+      const gameInfoResponse = await axios.post(
+        "http://localhost:5014/common/getinfo",
+        {},
+        {
+          params: {
+            id: 104048,
+            gameId: 1
+          },
+          withCredentials: true // This will include cookies in the request
+        }
+      );
+
+      setMessage(`Game info fetched: ${JSON.stringify(gameInfoResponse.data)}`);
+    } catch (error) {
+      setMessage(`Error: ${error.response ? error.response.data : error.message}`);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Login</h1>
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <button onClick={handleLogin}>Login</button>
+      <p>{message}</p>
     </div>
   );
 }
