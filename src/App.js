@@ -18,12 +18,12 @@ function App() {
       setMessage("Login successful. Fetching game info...");
 
       const gameInfoResponse = await axios.post(
-        "http://localhost:5014/common/getinfo",
+        "http://localhost:5014/api/account/GameHistory",
         {},
         {
           params: {
-            id: 104048,
-            gameId: 1
+            "Timezone": 0,
+            "SearchDate": "06/01/2024 - 07/31/2024"
           },
           withCredentials: true // This will include cookies in the request
         }
